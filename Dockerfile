@@ -1,20 +1,14 @@
-# Using Node.js 16 as the base image
-FROM node:16
+FROM python:3.9
 
-# Setting up the working directory
-WORKDIR /app
+WORKDIR /deepesh
 
-# Copy only package.json and package-lock.json first (to leverage Docker cache)
-COPY package*.json ./
+COPY requirements.txt .
 
-# Install dependencies
-RUN npm install
+RUN pip install -r requirements.txt 
 
-# Copy application source code
 COPY . .
 
-# Expose port 3000
-EXPOSE 3000
+EXPOSE 8000
 
-# Start the application
-CMD ["npm", "start"]
+CMD ["python", "/deepesh/manage.py", "runserver", "0.0.0.0:8000"]
+
