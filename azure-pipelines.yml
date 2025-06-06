@@ -40,7 +40,7 @@ steps:
   inputs:
     azureSubscription: 'DevOps-AppMod-Team-SP'
     appType: 'webAppLinux'
-    appName: 'py-cicd'
+    appName: 'python-cicd'
     package: '$(Build.ArtifactStagingDirectory)/app.zip'
-    runtimeStack: 'PYTHON|3.9'
+    runtimeStack: 'PYTHON|3.12'
   displayName: 'Deploy to Azure App Service'
