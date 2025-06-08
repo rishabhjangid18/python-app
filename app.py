@@ -56,7 +56,7 @@ def hello():
     </head>
     <body>
         <h1>{greeting}</h1>
-        <p>Hello, welcome to this Flask app!</p>
+        <p>Hello, welcome to this Flask app! from <b>master</b> branch</p>
         <p class="fact">Did you know? Flask is named after a Python micro web framework that's small but mighty!</p>
         <button onclick="alert('Thanks for clicking! 😄')">Click Me</button>
     </body>
