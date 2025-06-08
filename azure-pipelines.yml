@@ -17,23 +17,6 @@ stages:
       steps:
 
         - script: |
-            sudo apt update
-            sudo apt install -y wget build-essential libssl-dev zlib1g-dev \
-              libbz2-dev libreadline-dev libsqlite3-dev curl llvm \
-              libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev zip
-
-            cd /tmp
-            wget https://www.python.org/ftp/python/$(pythonVersion)/Python-$(pythonVersion).tgz
-            tar -xf Python-$(pythonVersion).tgz
-            cd Python-$(pythonVersion)
-            ./configure --enable-optimizations
-            make -j$(nproc)
-            sudo make altinstall
-
-            python3.11 --version
-          displayName: 'Install Python 3.11'
-
-        - script: |
             python3.11 -m venv venv
             source venv/bin/activate
             pip install --upgrade pip
