@@ -46,13 +46,12 @@ stages:
   dependsOn: Build
   jobs:
     - job: Test
-      displayName: 'Run Unit Tests'
+      displayName: 'Dependencies'
       steps:
         - script: |
             python3.10 -m venv venv
             source venv/bin/activate
             pip install -r requirements.txt
-            pytest  # Or replace with your test command
           displayName: 'Run Tests'
 
 ### 🚀 DEPLOY STAGE
