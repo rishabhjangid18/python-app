@@ -1,5 +1,8 @@
 trigger:
-- master
+ branches:
+   include:
+     - none
+
 
 # pool:
 #   name: personal-vm
@@ -7,7 +10,8 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  pythonVersion: '3.11'
+  pythonVersion: $(pythonVersion)
+  keyVaultName: $(keyvaultName)
 
 stages:
 
@@ -15,9 +19,29 @@ stages:
 - stage: Build
   displayName: 'Build Stage'
   jobs:
-    - job: Build
+    - job: BuildandPush
       displayName: 'Build Job'
       steps:
+        - task: AzureKeyVault@2
+          inputs:
+            azureSubscription: '$(serviceConnectionName)'
+            KeyVaultName: 'secret-docker1'
+            SecretsFilter: '$(keyVaultName)'
+            RunAsPreJob: true
+
+        - task: Docker@2
+          inputs:
+            containerRegistry: '$(ACR-service-Connection)'
+            command: 'login'
+
+        - task: Docker@2
+          inputs:
+            containerRegistry: 'ACR-Connection-Dev-003'
+            repository: 'My-Flask-app'
+            command: 'buildAndPush'
+            Dockerfile: '/Dockerfile'
+            buildContext: '$(Build.SourcesDirectory)'
+          
         - script: |
             python3.10 -m venv venv
             source venv/bin/activate
