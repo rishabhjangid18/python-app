@@ -81,7 +81,7 @@ stages:
                inputs:
                  azureSubscription: '$(ServiceConnectionName)'
                  appName: '$(appService-dev-new)'
-                 containers: '$(ImageName)'
+                 containers: '$(ImageName):$(Build.BuildId)'
 
 - stage: DeployProd
   displayName: 'DeployToProd'
