@@ -42,7 +42,7 @@ stages:
             tags: |
              $(Build.BuildId)
           env:
-           PORT: $(SecretName1)
+           PORT: $(PORT)
           
         - script: |
             python3.10 -m venv venv
