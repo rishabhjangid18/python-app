@@ -23,6 +23,7 @@ stages:
             KeyVaultName: 'secret-docker1'
             SecretsFilter: 'PORT'
             RunAsPreJob: true
+          name: fetchSecret
 
         - script: |
            echo "##vso[task.setvariable variable=portValue;isSecret=false]$PORT"
