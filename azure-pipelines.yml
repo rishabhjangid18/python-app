@@ -24,8 +24,15 @@ stages:
             SecretsFilter: 'PORT'
             RunAsPreJob: true
 
-        - script: echo "SecretName1:" $(PORT)
-          displayName: 'Debug Secret Name'
+        - script: |
+           echo "##vso[task.setvariable variable=portValue;isSecret=false]$PORT"
+          displayName: 'Make PORT visible'
+
+        - script: |
+           echo "PORT from Key Vault is: $(portValue)"
+          displayName: 'Show PORT value'
+
+
 
         - task: Docker@2
           inputs:
