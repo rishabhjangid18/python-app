@@ -26,6 +26,19 @@ stages:
             SecretsFilter: 'PORT'
             RunAsPreJob: true
 
+        - task: replacetokens@6
+          displayName: 'Replace tokens in Dockerfile'
+          inputs:
+            root: '$(Build.SourcesDirectory)'
+            sources: 'Dockerfile'
+            tokenPattern: 'doubleunderscores'
+            addBOM: false
+            encoding: 'auto'
+            writeBOM: false
+            actionOnMissing: 'warn'
+            keepToken: false
+            useLegacyPattern: false
+
         - task: Docker@2
           inputs:
             containerRegistry: '$(ACR-Service-Connection)'
