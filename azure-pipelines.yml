@@ -30,19 +30,32 @@ stages:
           inputs:
             containerRegistry: '$(ACR-Service-Connection)'
             command: 'login'
-
+       
         - task: Docker@2
           inputs:
-            containerRegistry: '$(ACR-Service-Connection)'
+            containerRegistry: 'ACR-Connection-Dev-003'
             repository: '$(ImageName)'
-            command: 'buildAndPush'
+            command: 'build'
             Dockerfile: 'Dockerfile'
-            buildContext: '$(Build.SourcesDirectory)'
-            tags: |
-             $(Build.BuildId)
-          env:
-            PORT: $(PORT)
-          arguments: '--build-arg FLASK_PORT=$(FLASK_PORT)'
+            arguments: '--build-arg PORT=$(PORT)'
+        
+        - task: Docker@2
+          inputs:
+            containerRegistry: 'ACR-Connection-Dev-003'
+            repository: '$(ImageName)'
+            command: 'push'
+      #  - task: Docker@2
+       #   inputs:
+        #    containerRegistry: '$(ACR-Service-Connection)'
+         #   repository: '$(ImageName)'
+          #  command: 'buildAndPush'
+           # Dockerfile: 'Dockerfile'
+           # buildContext: '$(Build.SourcesDirectory)'
+           # tags: |
+           #  $(Build.BuildId)
+          #env:
+           # PORT: $(PORT)
+         
           
         - script: |
             python3.10 -m venv venv
