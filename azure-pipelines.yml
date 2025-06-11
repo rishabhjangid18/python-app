@@ -80,8 +80,8 @@ stages:
              - task: AzureWebAppContainer@1
                inputs:
                  azureSubscription: '$(ServiceConnectionName)'
-                 appName: '$(AppServiceDev)'
-                 containers: '$(ImageName)'
+                 appName: '$(appService-dev-new)'
+                 containers: '$(AcrName).azurecr.io/$(ImageName):$(Build.BuildId)'
 
 - stage: DeployProd
   displayName: 'DeployToProd'
