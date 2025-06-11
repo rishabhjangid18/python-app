@@ -1,7 +1,7 @@
 trigger:
  branches:
    include:
-     - none
+     - master
 
 
 # pool:
@@ -9,13 +9,10 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-variables:
-  pythonVersion: $(pythonVersion)
-  keyVaultName: $(keyvaultName)
 
 stages:
 
-### 🏗️ BUILD STAGE
+# BUILD STAGE
 - stage: Build
   displayName: 'Build Stage'
   jobs:
@@ -24,23 +21,27 @@ stages:
       steps:
         - task: AzureKeyVault@2
           inputs:
-            azureSubscription: '$(serviceConnectionName)'
-            KeyVaultName: 'secret-docker1'
-            SecretsFilter: '$(keyVaultName)'
+            azureSubscription: '$(ServiceConnectionName)'
+            KeyVaultName: '$(keyVaultName)'
+            SecretsFilter: '$(SecretName)'
             RunAsPreJob: true
 
         - task: Docker@2
           inputs:
-            containerRegistry: '$(ACR-service-Connection)'
+            containerRegistry: '$(ACR-Service-Connection)'
             command: 'login'
 
         - task: Docker@2
           inputs:
-            containerRegistry: 'ACR-Connection-Dev-003'
-            repository: 'My-Flask-app'
+            containerRegistry: '$(ACR-Service-Connection)'
+            repository: '$(ImageName)'
             command: 'buildAndPush'
-            Dockerfile: '/Dockerfile'
+            Dockerfile: 'Dockerfile'
             buildContext: '$(Build.SourcesDirectory)'
+            tags: |
+             $(Build.BuildId)
+          env:
+           PORT: $(SecretName)
           
         - script: |
             python3.10 -m venv venv
@@ -48,23 +49,7 @@ stages:
             pip install -r requirements.txt
           displayName: 'Install dependencies'
 
-        - task: ArchiveFiles@2
-          inputs:
-            rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
-            includeRootFolder: false
-            archiveType: 'zip'
-            archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
-            replaceExistingArchive: true
-          displayName: 'Archive application'
-
-        - task: PublishBuildArtifacts@1
-          inputs:
-            PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-            ArtifactName: 'drop'
-            publishLocation: 'Container'
-          displayName: 'Publish Build Artifacts'
-
-### ✅ TEST STAGE
+    
 - stage: Test
   displayName: 'Test Stage'
   dependsOn: Build
@@ -78,23 +63,51 @@ stages:
             pip install -r requirements.txt
           displayName: 'Run Tests'
 
-### 🚀 DEPLOY STAGE
-- stage: Deploy
-  displayName: 'Deploy Stage'
+# DEPLOY STAGE
+- stage: DeployDev
+  displayName: 'DeployToDev'
   dependsOn: Test
   condition: succeeded()
   jobs:
     - job: Deploy
       displayName: 'Deploy to Azure'
-      steps:
-        - download: current
-          artifact: drop
+    - deployment: deployDevJob
+      environment: Dev
+      strategy:
+       runOnce:
+         deploy:
+           steps:
+             - task: AzureWebAppContainer@1
+               inputs:
+                 azureSubscription: '$(ServiceConnectionName)'
+                 appName: '$(AppServiceDev)'
+                 containers: '$(ImageName)'
 
-        - task: AzureWebApp@1
-          inputs:
-            azureSubscription: 'DevOps-AppMod'
-            appType: 'webAppLinux'
-            appName: 'flask-cicd'
-            package: '$(Pipeline.Workspace)/drop/app.zip'
-            runtimeStack: 'PYTHON|3.11'
-          displayName: 'Deploy to Azure App Service'
+- stage: DeployProd
+  displayName: 'DeployToProd'
+  dependsOn: DeployDev
+  condition: succeeded()
+  jobs:
+    - deployment: DeployProdJob
+      environment: prod
+      strategy: 
+        runOnce:
+          deploy:
+            steps:
+            
+             - task: AzureWebAppContainer@1
+               inputs:
+                 azureSubscription: '$(ServiceConnectionName)'
+                 appName: '$(appservice-prod)'
+                 containers: '$(ImageName)'
+  
+      
+    
+      #  - task: AzureWebApp@1
+       #   inputs:
+        #    azureSubscription: 'DevOps-AppMod'
+         #   appType: 'webAppLinux'
+          #  appName: 'flask-cicd'
+           # package: '$(Pipeline.Workspace)/drop/app.zip'
+           # runtimeStack: 'PYTHON|3.11'
+          #displayName: 'Deploy to Azure App Service'
