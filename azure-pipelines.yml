@@ -3,10 +3,12 @@ trigger:
    include:
      - master
 
+
 # pool:
 #   name: personal-vm
 pool:
   vmImage: 'ubuntu-latest'
+
 
 stages:
 
@@ -19,43 +21,27 @@ stages:
       steps:
         - task: AzureKeyVault@2
           inputs:
-            azureSubscription: 'Service-connection-Dev-003'
-            KeyVaultName: 'secret-docker1'
+            azureSubscription: '$(ServiceConnectionName)'
+            KeyVaultName: '$(KeyVaultName1)'
             SecretsFilter: 'PORT'
             RunAsPreJob: true
-         # name: FetchSecret
-
 
         - task: Docker@2
           inputs:
             containerRegistry: '$(ACR-Service-Connection)'
             command: 'login'
-       
+
         - task: Docker@2
           inputs:
-            containerRegistry: 'ACR-Connection-Dev-003'
+            containerRegistry: '$(ACR-Service-Connection)'
             repository: '$(ImageName)'
-            command: 'build'
+            command: 'buildAndPush'
             Dockerfile: 'Dockerfile'
-            arguments: '--build-arg PORT=$(PORT)'
-        
-        - task: Docker@2
-          inputs:
-            containerRegistry: 'ACR-Connection-Dev-003'
-            repository: '$(ImageName)'
-            command: 'push'
-      #  - task: Docker@2
-       #   inputs:
-        #    containerRegistry: '$(ACR-Service-Connection)'
-         #   repository: '$(ImageName)'
-          #  command: 'buildAndPush'
-           # Dockerfile: 'Dockerfile'
-           # buildContext: '$(Build.SourcesDirectory)'
-           # tags: |
-           #  $(Build.BuildId)
-          #env:
-           # PORT: $(PORT)
-         
+            buildContext: '$(Build.SourcesDirectory)'
+            tags: |
+             $(Build.BuildId)
+          env:
+           PORT: $(PORT)
           
         - script: |
             python3.10 -m venv venv
@@ -96,7 +82,6 @@ stages:
                  azureSubscription: '$(ServiceConnectionName)'
                  appName: '$(appService-dev-new)'
                  containers: '$(ImageName):$(Build.BuildId)'
-                 
 
 - stage: DeployProd
   displayName: 'DeployToProd'
@@ -115,3 +100,14 @@ stages:
                  azureSubscription: '$(ServiceConnectionName)'
                  appName: '$(appservice-prod)'
                  containers: '$(ImageName)'
+  
+      
+    
+      #  - task: AzureWebApp@1
+       #   inputs:
+        #    azureSubscription: 'DevOps-AppMod'
+         #   appType: 'webAppLinux'
+          #  appName: 'flask-cicd'
+           # package: '$(Pipeline.Workspace)/drop/app.zip'
+           # runtimeStack: 'PYTHON|3.11'
+          #displayName: 'Deploy to Azure App Service'
