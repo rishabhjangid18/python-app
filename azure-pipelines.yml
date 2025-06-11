@@ -31,13 +31,7 @@ stages:
           inputs:
             root: '$(Build.SourcesDirectory)'
             sources: 'Dockerfile'
-            tokenPattern: 'doubleunderscores'
-            addBOM: false
-            encoding: 'auto'
-            writeBOM: false
-            actionOnMissing: 'warn'
-            keepToken: false
-            useLegacyPattern: false
+            tokenPattern: 'doublebraces'
 
         - script: cat Dockerfile
           displayName: 'Debug Dockerfile after token replacement'
