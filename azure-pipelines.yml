@@ -19,9 +19,9 @@ stages:
       steps:
         - task: AzureKeyVault@2
           inputs:
-            azureSubscription: '$(ServiceConnectionName)'
-            KeyVaultName: '$(KeyVaultName1)'
-            SecretsFilter: '$(SecretName1)'
+            azureSubscription: 'Service-connection-Dev-003'
+            KeyVaultName: 'secret-docker1'
+            SecretsFilter: '*'
             RunAsPreJob: true
 
         - script: echo "SecretName1:" $(SecretName1)
