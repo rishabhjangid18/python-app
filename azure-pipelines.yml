@@ -24,7 +24,7 @@ stages:
             SecretsFilter: 'PORT'
             RunAsPreJob: true
 
-        - script: echo "SecretName1:" $(SecretName1)
+        - script: echo "SecretName1:" $(PORT)
           displayName: 'Debug Secret Name'
 
         - task: Docker@2
