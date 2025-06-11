@@ -9,7 +9,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 
-ENV PORT=__PORT__
+ENV PORT= {{PORT}}
 
 #EXPOSE ${PORT}
 
