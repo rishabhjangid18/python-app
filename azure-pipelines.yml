@@ -41,8 +41,8 @@ stages:
             buildContext: '$(Build.SourcesDirectory)'
             tags: |
              $(Build.BuildId)
-          env:
-           PORT: $(PORT)
+        #  env:
+         #  PORT: $(PORT)
           
         - script: |
             python3.10 -m venv venv
@@ -83,6 +83,8 @@ stages:
                  azureSubscription: '$(ServiceConnectionName)'
                  appName: '$(appService-dev-new)'
                  containers: '$(ImageName):$(Build.BuildId)'
+                 appSettings: |
+                  PORT=$(SecretName1)
 
 - stage: DeployProd
   displayName: 'DeployToProd'
