@@ -8,9 +8,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-ENV PORT=${PORT}
+ARG PORT
+ENV PORT=$PORT
 
-EXPOSE ${PORT}
+#EXPOSE ${PORT}
 
 CMD [ "python", "app.py" ]
 
