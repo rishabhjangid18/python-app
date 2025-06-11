@@ -39,6 +39,8 @@ stages:
             keepToken: false
             useLegacyPattern: false
 
+        - script: cat Dockerfile
+          displayName: 'Debug Dockerfile after token replacement'
         - task: Docker@2
           inputs:
             containerRegistry: '$(ACR-Service-Connection)'
