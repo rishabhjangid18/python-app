@@ -95,7 +95,7 @@ stages:
              - task: AzureWebAppContainer@1
                inputs:
                  azureSubscription: '$(ServiceConnectionName)'
-                 appName: '$(appService-dev-new)'
+                 appName: '$(AppService-Dev-new)'
                  containers: '$(ImageName):$(Build.BuildId)'
 
 - stage: DeployProd
