@@ -22,8 +22,8 @@ stages:
         - task: AzureKeyVault@2
           inputs:
             azureSubscription: '$(ServiceConnectionName)'
-            KeyVaultName: '$(keyVaultName)'
-            SecretsFilter: '$(SecretName)'
+            KeyVaultName: '$(KeyVaultName1)'
+            SecretsFilter: '$(SecretName1)'
             RunAsPreJob: true
 
         - task: Docker@2
@@ -41,7 +41,7 @@ stages:
             tags: |
              $(Build.BuildId)
           env:
-           PORT: $(SecretName)
+           PORT: $(SecretName1)
           
         - script: |
             python3.10 -m venv venv
