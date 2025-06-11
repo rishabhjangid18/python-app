@@ -3,12 +3,10 @@ trigger:
    include:
      - master
 
-
 # pool:
 #   name: personal-vm
 pool:
   vmImage: 'ubuntu-latest'
-
 
 stages:
 
@@ -25,6 +23,9 @@ stages:
             KeyVaultName: '$(KeyVaultName1)'
             SecretsFilter: '$(SecretName1)'
             RunAsPreJob: true
+
+        - script: echo "SecretName1:" $(SecretName1)
+          displayName: 'Debug Secret Name'
 
         - task: Docker@2
           inputs:
@@ -100,14 +101,3 @@ stages:
                  azureSubscription: '$(ServiceConnectionName)'
                  appName: '$(appservice-prod)'
                  containers: '$(ImageName)'
-  
-      
-    
-      #  - task: AzureWebApp@1
-       #   inputs:
-        #    azureSubscription: 'DevOps-AppMod'
-         #   appType: 'webAppLinux'
-          #  appName: 'flask-cicd'
-           # package: '$(Pipeline.Workspace)/drop/app.zip'
-           # runtimeStack: 'PYTHON|3.11'
-          #displayName: 'Deploy to Azure App Service'
