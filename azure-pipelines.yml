@@ -21,7 +21,7 @@ stages:
           inputs:
             azureSubscription: 'Service-connection-Dev-003'
             KeyVaultName: 'secret-docker1'
-            SecretsFilter: '*'
+            SecretsFilter: 'PORT'
             RunAsPreJob: true
 
         - script: echo "SecretName1:" $(SecretName1)
@@ -84,7 +84,7 @@ stages:
                  appName: '$(appService-dev-new)'
                  containers: '$(ImageName):$(Build.BuildId)'
                  appSettings: |
-                  PORT=$(SecretName1)
+                  PORT=$(PORT)
 
 - stage: DeployProd
   displayName: 'DeployToProd'
