@@ -8,7 +8,7 @@ def hello():
     current_hour = datetime.now().hour
 
     if current_hour < 12:
-        greeting = "Good morning ☀️"
+        greeting = "Good"
     elif current_hour < 18:
         greeting = "Good afternoon 🌤️"
     else:
