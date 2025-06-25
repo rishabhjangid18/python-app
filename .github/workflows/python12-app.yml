@@ -1,65 +1,40 @@
 name: Python application
-
+ 
 on:
   push:
-    branches: [ "dev", "master", "uat" ]
+    branches: [ "dev" ]
   pull_request:
-    branches: [ "dev", "master", "uat" ]
-
+    branches: [ "dev" ]
+ 
 permissions:
   contents: read
-
+ 
 jobs:
   build:
+ 
     runs-on: ubuntu-latest
-
+ 
     steps:
     - uses: actions/checkout@v4
-
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
       with:
         python-version: "3.10"
-
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    if: |
-      github.ref == 'refs/heads/dev' ||
-      github.ref == 'refs/heads/master' ||
-      github.ref == 'refs/heads/uat'
-
+ 
     steps:
     - uses: actions/checkout@v4
-
     - name: Building web app
       uses: azure/appservice-build@v2
-
-    - name: Deploy to Dev
-      if: github.ref == 'refs/heads/dev'
+    - name: deploy to app service
       uses: azure/webapps-deploy@v3
       with:
-        app-name: "python-dev"
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_DEV }}
-        package: .
-
-    - name: Deploy to master
-      if: github.ref == 'refs/heads/master'
-      uses: azure/webapps-deploy@v3
-      with:
-        app-name: "python-master"
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_STAGE }}
-        package: .
-
-    - name: Deploy to uat
-      if: github.ref == 'refs/heads/uat'
-      uses: azure/webapps-deploy@v3
-      with:
-        app-name: "python-uat"
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_MAIN }}
-        package: .
+          app-name: "python12"
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: .
