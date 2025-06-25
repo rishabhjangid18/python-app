@@ -30,10 +30,25 @@ jobs:
  
     steps:
     - uses: actions/checkout@v4
-    - name: Building web app
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Fetch publish profile from Azure Key Vault
+      id: get-publish-profile
+      uses: azure/get-keyvault-secrets@v1
+      with:
+        keyvault: ${{ secrets.KEYVAULT_NAME }}
+        secrets: |
+          AZURE_WEBAPP_PUBLISH_PROFILE
+    - name: Build web app
       uses: azure/appservice-build@v2
-    - name: deploy to app service
+
+    - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v3
+
       with:
           app-name: "python12"
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
