@@ -51,5 +51,5 @@ jobs:
 
       with:
           app-name: "python12"
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          publish-profile: ${{ steps.get-publish-profile.outputs.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: .
