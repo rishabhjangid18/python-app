@@ -30,11 +30,18 @@ jobs:
  
     steps:
     - uses: actions/checkout@v4
-    - name: Building web app
-      uses: azure/appservice-build@v2
-    - name: deploy to app service
-      uses: azure/webapps-deploy@v3
+    
+      # Authenticate with Azure
+    - name: Azure Login
+      uses: azure/login@v1
       with:
-          app-name: "python-app"
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: .
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Deploy using Azure CLI
+    - name: Deploy to Azure Web App
+      run: |
+        az webapp deploy \
+          --resource-group Rishabh-RG \
+          --name python-app \
+          --src-path . \
+          --type zip
